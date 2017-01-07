@@ -26,7 +26,7 @@ export default function(pouchapp) {
 
 		// ignore requests without authorization
 		let auth = req.get("authorization");
-		if (!auth || !/^Bearer /.test(auth)) return next();
+		if (!auth || !/^Bearer /.test(auth)) return utils.sendError(res, "Authorization required", 401);
 
 		let token = auth.substr(6).trim();
 		let payload;
