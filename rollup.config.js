@@ -1,4 +1,4 @@
-import babel from "rollup-plugin-babel";
+import babel from "rollup-plugin-babel"
 
 export default {
 	onwarn: ()=>{},
@@ -7,4 +7,4 @@ export default {
 			exclude: 'node_modules/**'
 		})
 	]
-};
+}

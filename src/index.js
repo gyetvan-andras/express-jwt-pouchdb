@@ -1,8 +1,8 @@
-import EPouchDB from "express-pouchdb";
-import jwtroute from "./jwt-auth";
+import EPouchDB from "express-pouchdb"
+import jwtroute from "./jwt-auth"
 
-var modes = {};
-modes.custom = [];
+var modes = {}
+modes.custom = []
 modes.minimumForPouchDB = [
 	// sorted alphabetically
 	'compression',
@@ -22,7 +22,7 @@ modes.minimumForPouchDB = [
 	'routes/temp-views',
 	'routes/view-cleanup',
 	'routes/views'
-];
+]
 
 modes.fullCouchDB = [
 	// sorted alphabetically
@@ -54,63 +54,63 @@ modes.fullCouchDB = [
 	'routes/uuids',
 	'routes/vhosts',
 	'validation'
-].concat(modes.minimumForPouchDB);
+].concat(modes.minimumForPouchDB)
 
 function toObject(array) {
-	var result = {};
+	var result = {}
 	array.forEach(function (item) {
-		result[item] = true;
-	});
-	return result;
+		result[item] = true
+	})
+	return result
 }
 
 export default function(startPouchDB, opts) {
 		// both PouchDB and opts are optional
 		if (startPouchDB && !startPouchDB.defaults) {
-			[opts,startPouchDB] = [startPouchDB,null];
+			[opts,startPouchDB] = [startPouchDB,null]
 		}
 
-		opts = opts || {};
+		opts = opts || {}
 
 		const pouchapp = EPouchDB(Object.assign({}, opts, {
 			mode: "custom",
 			overrideMode: {}
-		}));
+		}))
 
-		let setPouchDB = pouchapp.setPouchDB;
+		let setPouchDB = pouchapp.setPouchDB
 		pouchapp.setPouchDB = function(PouchDB) {
-			pouchapp.PouchDB = PouchDB;
-			return setPouchDB(PouchDB);
-		};
+			pouchapp.PouchDB = PouchDB
+			return setPouchDB(PouchDB)
+		}
 
 		// determine which parts of express-pouchdb to activate
-		opts.overrideMode = opts.overrideMode || {};
-		opts.overrideMode.include = opts.overrideMode.include || [];
-		opts.overrideMode.exclude = opts.overrideMode.exclude || [];
+		opts.overrideMode = opts.overrideMode || {}
+		opts.overrideMode.include = opts.overrideMode.include || []
+		opts.overrideMode.exclude = opts.overrideMode.exclude || []
 		opts.overrideMode.include.forEach(function (part) {
 			if (modes.fullCouchDB.indexOf(part) === -1) {
 				throw new Error(
 					"opts.overrideMode.include contains the unknown part '" +
 					part + "'."
-				);
+				)
 			}
-		});
+		})
 
-		var modeIncludes = modes[opts.mode || 'fullCouchDB'];
+		var modeIncludes = modes[opts.mode || 'fullCouchDB']
 		if (!modeIncludes) {
-			throw new Error('Unknown mode: ' + opts.mode);
+			throw new Error('Unknown mode: ' + opts.mode)
 		}
-		var allIncludes = modeIncludes.concat(opts.overrideMode.include);
-		pouchapp.includes = toObject(allIncludes);
+		var allIncludes = modeIncludes.concat(opts.overrideMode.include)
+		pouchapp.includes = toObject(allIncludes)
 		opts.overrideMode.exclude.forEach(function (part) {
 			if (!pouchapp.includes[part]) {
 				throw new Error(
 					"opts.overrideMode.exclude contains the not included part '" +
 					part + "'."
-				);
+				)
 			}
-			delete pouchapp.includes[part];
-		});
+			delete pouchapp.includes[part]
+		})
 
 		// load all modular files
 		[
@@ -163,15 +163,15 @@ export default function(startPouchDB, opts) {
 			'routes/404'
 		].forEach(function (file) {
 			if (typeof file === "function") {
-				file(pouchapp);
+				file(pouchapp)
 			} else if (pouchapp.includes[file]) {
-				require('express-pouchdb/lib/' + file)(pouchapp);
+				require('express-pouchdb/lib/' + file)(pouchapp)
 			}
-		});
+		})
 
 		if (startPouchDB) {
-			pouchapp.setPouchDB(startPouchDB);
+			pouchapp.setPouchDB(startPouchDB)
 		}
 
-		return pouchapp;
+		return pouchapp
 }
