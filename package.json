@@ -1,6 +1,6 @@
 {
   "name": "express-jwt-pouchdb",
-  "version": "0.0.0-edge",
+  "version": "0.0.1",
   "description": "Express-PouchDB with JSON Web Token Support.",
   "author": "Tyler Johnson <tyler@tylerjohnson.me>",
   "repository": {
@@ -19,12 +19,12 @@
   },
   "dependencies": {
     "express": "^4.13.4",
-    "express-pouchdb": "^1.0.3",
+    "express-pouchdb": "^2.3.6",
     "jsonwebtoken": "^7.0.1",
     "memdown": "^1.1.2",
     "minimist": "^1.2.0",
     "mkdirp": "^0.5.1",
-    "pouchdb": "^5.3.1"
+    "pouchdb": "^6.1.2"
   },
   "devDependencies": {
     "autorelease": "^1.6.0",
